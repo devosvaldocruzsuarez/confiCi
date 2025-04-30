@@ -315,7 +315,20 @@ switch (ENVIRONMENT)
 
  require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// 1. Si existe .env.local, usarlo como prioridad (modo local)
+$env = getenv('CI_ENV') ?: 'local'; // por defecto 'local'
+ echo "\n================================\n";
+	var_dump(getenv('APP_ENV'));
+echo "\n================================\n";
+// 2. Construir el nombre del archivo a cargar
+$dotenvFile = ".env.$env";
+$dotenvPath = __DIR__ . "/$dotenvFile";
+
+// 3. Si existe el archivo correspondiente, cargarlo
+if (file_exists($dotenvPath)) {
+    Dotenv\Dotenv::createImmutable(__DIR__, $dotenvFile)->load();
+}
+
+
 
 require_once BASEPATH.'core/CodeIgniter.php';
